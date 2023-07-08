@@ -1,0 +1,22 @@
+<div class="w-screen overflow-hidden text-[3vw]  px-[4.3vw] overflow-x:hidden">
+    <div class="h-[17.86vw] text-[4.3vw] text-center leading-[17.86vw]">歌单广场</div>
+
+    <div class="w-[80vw] overflow-hidden ml-[3.5vw] mb-[2vw] scroll-wrapper" ref="scroll">
+        <ul class="flex items-center scroll-content overflow-hidden h-[10vw] w-[125vw]">
+            <li v-for="item in menu"class="mr-[4.5vw] h-[4vw] text-center cursor-pointer text-[3vw] scroll-item" :class="{active:item.name === activeMenuItem}"
+                @click="toggleMenu(item.name)">
+                {{item.name}}
+            </li>
+        </ul>
+        <Icon icon="ep:menu" />
+    </div>
+
+    <ul class="flex flex-wrap justify-between ">
+        <li v-for="item in playlists" class="w-[28.89vw] mb-[4vw]">
+            <div class="w-[28.89vw] h-[28.89vw] rounded">
+                <img :src=item.coverImgUrl class="w-[28.89vw] h-[28.89vw] rounded-[3vw] " alt="">
+            </div>
+            <p class="h-[9vw] text-ellipsis overflow-hidden mt-[1vw]">{{item.name}}</p>
+        </li>
+    </ul>
+</div>
