@@ -1,6 +1,6 @@
 <template>
 <div :class="{dark:switchCheckStatus}">
-    <div class="bg-[pink]  dark:bg-[#000]">
+    <div class="bg-[#000]  dark:bg-[#000]">
     <!-- 头部 -->
     <div class="pl-[4.35vw] pb-[4vw] bg-[#000] flex top-0 justify-between pt-[3.46vw] w-[100vw] fixed">
         <div class="flex items-center">
@@ -90,7 +90,7 @@
     <div class="text-[#fff] text-[12px]  bg-[#fff] rounded-t-[15px] ">
         <div class="sticky rounded-t-[15px] bg-[#fff] top-[14vw] flex items-center text-[#000] mb-[5vw] h-[10vw]">
             <div class=" flex items-center ml-[4.26vw] mt-[4vw]">
-                <span><Icon icon="gridicons:play" width="20" height="20" color="red" /></span>
+                <Icon @click.native="platAll" icon="gridicons:play" width="20" height="20" color="red" />
                 <p class="ml-[3.89vw] w-[15vw]">播放全部</p>
                 <p>({{ data.data?.songs?.length }})</p>
             </div>
@@ -102,7 +102,7 @@
         <div class="">
             <div class="ml-[5.2vw] flex items-center text-[#000] mt-[6vw]" v-for="(item, index) in fetch" :key="item.id">
                 <span class="w-[6vw]">{{ index + 1 }}</span>
-                <div class="overflow-hidden w-[50vw] whitespace-nowrap ml-[3vw]">
+                <div @click="platAdd(item)" class="overflow-hidden w-[50vw] whitespace-nowrap ml-[3vw]">
                     <div class="flex">
                         <p>{{ item.name }}</p>
                         <p v-if="item.alia.length !== 0">{{ item.alia }}</p>
@@ -132,52 +132,66 @@ import {songDetails,fetchSongList,musicSlider,playlistTrackAll} from '@/requerst
 import store from 'storejs';
 
 export default{
-    data(){
-        return{
-            songList:[],
-            fetch:[],
-            terent:true,
-            display:false,
-            music:[],
-            data:[],
-            switchCheckStatus:null
-        }
+    data() {
+        return {
+            songList: [],
+            fetch: [],
+            terent: true,
+            display: false,
+            music: [],
+            data: [],
+            switchCheckStatus: null,
+        };
     },
-    methods:{
-        search(){
-            this.$router.push('/NetEaseCloud')
+    methods: {
+        platAll() {
+            window.$player.replacePlaylist(
+                this.data.data.songs.map((song) => song.id), 
+                "",
+                "", 
+                console.log(this.data));
         },
-        fn(){
-            this.terent = !this.terent
-            this.display = !this.display
+        platAdd(item) {
+            window.$player.replacePlaylist(
+                this.data.data.songs.map((song) => song.id),
+                 "",
+                  "",
+                  item.id);
+            
         },
-        fn_1(){
-            this.terent = !this.terent
-            this.display = !this.display
+        search() {
+            this.$router.push("/NetEaseCloud");
         },
-
+        fn() {
+            this.terent = !this.terent;
+            this.display = !this.display;
+        },
+        fn_1() {
+            this.terent = !this.terent;
+            this.display = !this.display;
+        },
     },
     async created() {
-        this.switchCheckStatus = store.get('switch');
-        this.data = await playlistTrackAll(this.$route.query.id.replace(':id='),'')
+        this.switchCheckStatus = store.get("switch");
+        this.data = await playlistTrackAll(this.$route.query.id.replace(":id="), "");
         // console.log(this.$route)
         songDetails(this.$route.query.id).then((res) => {
-          console.log(res)
-          this.songList=res.data.playlist
-          console.log(this.songList);
+            console.log(res);
+            this.songList = res.data.playlist;
+            console.log(this.songList);
         }),
-        fetchSongList(this.$route.query.id).then((res) => {
-          console.log(res)
-          this.fetch = res.data.songs 
-          console.log(this.fetch);
-        }),
-        musicSlider(this.$route.query.id).then((res) => {
-          console.log(res)
-          this.music = res.data.playlists
-          console.log(this.music);
-        })
-    }
-    
+            fetchSongList(this.$route.query.id).then((res) => {
+                console.log(res);
+                this.fetch = res.data.songs;
+                console.log(this.fetch);
+            }),
+            musicSlider(this.$route.query.id).then((res) => {
+                console.log(res);
+                this.music = res.data.playlists;
+                console.log(this.music);
+            });
+    },
+
 }
 </script>
 <style>

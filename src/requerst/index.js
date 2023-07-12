@@ -1,5 +1,6 @@
 // 所有的请求都定义在这个位置
 import axios from 'axios';
+import { param } from 'jquery';
 import store from 'storejs';
 const http = axios.create({
   baseURL: 'https://netease-cloud-music-api-five-roan-88.vercel.app',
@@ -29,6 +30,26 @@ export const checkQrStatus = (key) => http.get('/login/qr/check',{params:{key, t
 
 export const getUserAccount = () => http.get('./user/account');
 
-export const getUserDetail = () => http.get('./user/detail',{params:{uid}});
+export const getUserDetail = (uid) => http.get('./user/detail',{params:{uid}});
+
 
 export const playlistTrackAll = (id) => http.get('/playlist/track/all',{params:{id}})
+
+// 获取ip地址
+export const getIPAddr = () => axios.get('https://api.ipify.org?format=json')
+export const ip2Territory = (ip) => axios.get(`http://ip-api.com/json/${ip}?lang=zh-CN`)
+
+// 收藏歌单
+export const fetchUserPlaylist = (uid) => http.get('/user/playlist', { params: { uid } });
+// 评论
+export const fetchUserHistory = (uid) => http.get('/user/comment/history', { params: { uid } });
+
+//歌曲信息
+export const fetchSongDetail = (ids) => http.get('/song/detail', { params: { ids } });
+
+// 歌手分类列表
+export const fetchArtistList = () => http.get('/artist/list')
+
+export const getTrackDetail = (id) => http.get('/song/detail', { params: { ids: id } });
+
+// export const getMP3 = (id) => http.get('/song/url/v1',{params:{id,lever:"standard"}})

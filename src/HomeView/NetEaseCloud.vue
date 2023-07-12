@@ -120,7 +120,6 @@
         <div class="mr-[4vw]" @click="drawerVisible = !drawerVisible" @自定义事件="(e) => (drawerVisible = e)">
           <Icon icon="solar:menu-dots-bold" color="#9097a2" :rotate="1" />
         </div>
-
       </div>
       <div class="bg-[#fff] rounded-[10px] ml-[10px] w-[90vw] h-[35vw]">
         <div v-for="item in music" :key="item.id" class=" ml-[8px]">
@@ -160,8 +159,8 @@
         <div class=" bg-[#f5f5f5] text-[#000] dark:bg-[#000] dark:text-[#000]">
             <div class="flex justify-between items-center pt-[4.63vw] bg-[#f5f5f5] text-[#000] dark:bg-[#000] dark:text-[#fff] fixed top-0 w-[83vw] px-[4vw] z-[99] pb-[3vw]">
                 <div class="flex items-center">
-                    <img src="../images/1.jpg" alt="" class="w-[7.5vw] h-[7.59vw] rounded-[50%]">
-                    <p class="text-[12px] ml-[3.52vw] mr-[1.57vwh]">暴龙战士</p>
+                    <img  :src="user.avatarUrl" alt="" class="w-[7.5vw] h-[7.59vw] rounded-[50%]">
+                    <p class="text-[12px] ml-[3.52vw] mr-[1.57vwh]">{{user.nickname}}</p>
                     <Icon icon="mingcute:right-line" color="#313131" />
                    </div>
                      <div>
@@ -439,7 +438,7 @@
                     </div>
                 </div>
                 <div class="w-[75vw] mt-[4.54vw] h-[13.52vw] bg-[#fff] rounded-[8px]">
-                    <p class="text-center text-[12px] text-[red] leading-[13.52vw]" @click="search_1">退出登录/关闭</p>
+                    <p class="text-center text-[12px] text-[red] leading-[13.52vw]" @click="fn_2">退出登录/关闭</p>
                 </div>
             </div>
             </div>
@@ -458,6 +457,8 @@ import Heet from './Heet.vue';
 import Newsong from './Newsong.vue';
 import Drawer from '../components/Drawer.vue';
 import store from 'storejs';
+import Dialog from '@/components/Dialog'
+import { getUserAccount, getUserDetail } from '@/requerst';
 
 
 export default {
@@ -479,6 +480,7 @@ export default {
             personalized:[],
             bannerPic:[],
             switchCheckStatus:null,
+            user:[],
         };
     },
     beforeDestroy() {
@@ -501,6 +503,19 @@ export default {
     
     
     methods: {
+        fn_2() {
+            Dialog({message: '确定退出当前账号吗？' })
+                .then(() => {
+                    console.log('点击了确定');
+                    store.remove('__m__cookie');
+                    store.remove('__m__User');//删除用户信息
+                    store.remove('__m__UserData');//删除账号信息
+                    this.$router.push('/Login');
+                })
+                .catch(() => {
+                    console.log('点击了取消');
+                });
+        },
         songDetails(id) {
             console.log(id)  
             this.$router.push({ path: '/song', query: { id } });
@@ -544,11 +559,19 @@ export default {
             renderBullet: function (index, className) {
                 return '<span class="' + className + '">'  + "</span>";
             },
-            },
+        },
+        
         });
     },
     },
-    created() {
+    async created() {
+        const resUser = await getUserAccount();
+        // console.log(resUser);
+        store.set('_cookieMusic',resUser.data.profile);
+        const detail = await getUserDetail(resUser.data.profile.userId);
+        console.log(detail);
+        this.user=store.get('_cookieMusic')
+        console.log(this.user);
         this.switchCheckStatus = store.get('switch');
         // 轮播
         axios.get("https://netease-cloud-music-api-five-roan-88.vercel.app/playlist/hot")

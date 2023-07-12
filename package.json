@@ -16,6 +16,7 @@
     "@vant/area-data": "^1.4.1",
     "axios": "^1.4.0",
     "eslint-import-resolver-webpack": "^0.13.2",
+    "howler": "^2.2.3",
     "jquery": "^3.7.0",
     "lodash": "^4.17.21",
     "storejs": "^2.0.5",

@@ -2,12 +2,12 @@ import NetEaseCloud from '../HomeView/NetEaseCloud.vue';
 import Search from '../HomeView/Search.vue'
 import Singing from '../HomeView/Singing.vue'
 import Login from '../HomeView/Login.vue'
-import JSX from '@/HomeView/JSX.jsx'
+import JSX from '@/HomeView/Information/Information.jsx'
 export default [
   // 路径重定向
   {
     path: '/',
-    redirect: '/JSX',
+    redirect: '/NetEaseCloud',
   },
   {
     path: '/NetEaseCloud',
@@ -32,6 +32,10 @@ export default [
   {
     path: '/JSX',
     component: JSX,
+  },
+  {
+    path: '/Playsong',
+    component: ()  => import ('@/HomeView/Playsong.vue')
   },
 ];
 

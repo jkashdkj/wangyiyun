@@ -2,10 +2,12 @@
     <div>
         <!-- 头部 -->
         <div class="flex items-center justify-between mt-[7vw] ml-[6vw]">
-            <span @click="search_2"><Icon icon="teenyicons:left-outline" width="20" height="20" /></span>
+            <span @click="search_2">
+                <Icon icon="teenyicons:left-outline" width="20" height="20" />
+            </span>
             <p class="text-[#6e6e6e] text-[14px] mr-[6vw]">游客登录</p>
         </div>
-        
+
         <!-- 未登录 -->
         <div v-if="tert" class="mt-[14vw] flex flex-col items-center">
             <div class="w-[38vw] h-[7vw]">
@@ -19,6 +21,7 @@
                 <p class="text-[#0b6ebe]">网易云音乐APP</p>
                 <p>扫码登录</p>
             </div>
+            <Player></Player>
         </div>
         <!-- 二维码过期 -->
         <div v-if="roune" class="mt-[14vw] flex flex-col items-center">
@@ -28,7 +31,9 @@
             <div class="mt-[10vw] relative">
                 <img :src="qrcode" alt="" class="opacity-0.5 ">
                 <div>
-                    <p class="text-[#fff] rounded-[25px] pt-[2vw] pb-[2vw] pl-[5vw] pr-[4vw] bg-[#f9412f] absolute top-[71px] left-[43px]">点击刷新</p>
+                    <p
+                        class="text-[#fff] rounded-[25px] pt-[2vw] pb-[2vw] pl-[5vw] pr-[4vw] bg-[#f9412f] absolute top-[71px] left-[43px]">
+                        点击刷新</p>
                 </div>
             </div>
             <div class="flex mt-[10vw]">
@@ -57,52 +62,63 @@
     </div>
 </template>
 <script>
-import {getQrKey ,getQrInfo,checkQrStatus} from '@/requerst';
+
+import { getQrKey, getQrInfo,getUserAccount, checkQrStatus,getUserDetail } from '@/requerst';
 import store from 'storejs';
-export default{
-    name:'Login',
-    data(){
-        return{
-            qrcode:'',
-            tert:true,
-            gent:false,
-            roune:false,
+export default {
+    name: 'Login',
+    data() {
+        return {
+            qrcode: '',
+            tert: true,
+            gent: false,
+            roune: false,
             // benter:false,
         };
     },
 
-    methods:{
-        search_2(){
+    methods: {
+        search_2() {
             this.$router.push('/NetEaseCloud')
         },
-        pollingCheck(key, interval = 1000){
+        pollingCheck(key, interval = 1000) {
             const timer = setInterval(async () => {
                 const res = await checkQrStatus(key);
-                if(res.data.code === 800){
+                if (res.data.code === 800) {
                     this.roune = true;
                     this.tert = false
                     clearInterval(timer)
-                }else if(res.data.code === 802){
-                    this.tert=false;
+
+                } else if (res.data.code === 802) {
+                    this.tert = false;
                     this.gent = true;
-                }else if(res.data.code === 803){
-                    this.$router.push('/NetEaseCloud');
+                } else if (res.data.code === 803) {
+                    store.set('__m__cookie',res.data.cookie)
+                    
+                    const user = await getUserAccount();
+                    console.log('用户详情',user.data);
+                    store.set('__m__User',user.data);//存用户信息
+                    
+                    const userData = await getUserDetail(user.data.account.id);
+                    store.set('__m__UserData',userData.data)
+
+
                     clearInterval(timer)
-                    // store.set('__m__cookie',res.data.cookie)
+                    this.$router.push('/NetEaseCloud');
                 }
-            },interval)
-                
-            this.$on('hook:beforeDestroy',() => clearInterval(timer))
+            }, interval)
+
+            this.$on('hook:beforeDestroy', () => clearInterval(timer))
         },
-        nll(){
+        nll() {
             this.tert = !this.tert
             this.gent = !this.gent
         },
-        qce(){
+        qce() {
             this.tert = !this.tert
             this.gent = !this.gent
         },
-        cert(){
+        cert() {
             this.roune = !roune
             this.gent = !this.gent
         },
@@ -110,24 +126,22 @@ export default{
         //     this.benter = !benter
         // }
     },
-    
+
     async created() {
         const res = await getQrKey().catch((err) => {
             console.log(err);
         });
-       const qrInfo = await getQrInfo(res.data.data.unikey).catch((err) =>
+        const qrInfo = await getQrInfo(res.data.data.unikey).catch((err) =>
             console.log(err)
-       );
-       this.qrcode = qrInfo.data.data.qrimg;
-       this.pollingCheck(res.data.data.unikey)
+        );
+        this.qrcode = qrInfo.data.data.qrimg;
+        this.pollingCheck(res.data.data.unikey)
     },
 
-    beforeDestroy(){
+    beforeDestroy() {
         //页面销毁前做的一些事
         console.log('deforeDestroy');
     }
 }
 </script>
-<style>
-
-</style>
+<style></style>
