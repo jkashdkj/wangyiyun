@@ -6,8 +6,10 @@ import Drawer from './components/Drawer.vue';
 import Switch from './components/Switch.vue';
 import Vant from 'vant';
 import 'vant/lib/index.css'
-import {Player} from '@/components';
+import Player from '@/components/Player'
 import { Button,Popup,Area,Circle } from 'vant';
+import VueSlider from 'vue-slider-component'
+import 'vue-slider-component/theme/default.css'
 Vue.use(Button).use(Popup).use(Area).use(Circle);
 
 Vue.use(Player)
@@ -15,6 +17,7 @@ Vue.use(Vant);
 Vue.component('Icon', Icon);
 Vue.component('Drawer', Drawer);
 Vue.component('v-Switch', Switch);
+Vue.component('VueSlider', VueSlider)
 import router from './router';
 new Vue({
     el: '#app', // 指令是出现在模板中

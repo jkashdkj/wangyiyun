@@ -86,7 +86,8 @@ export default {
                 const res = await checkQrStatus(key);
                 if (res.data.code === 800) {
                     this.roune = true;
-                    this.tert = false
+                    this.tert = false;
+                    this.gent = false;
                     clearInterval(timer)
 
                 } else if (res.data.code === 802) {
@@ -122,9 +123,6 @@ export default {
             this.roune = !roune
             this.gent = !this.gent
         },
-        // intert(){
-        //     this.benter = !benter
-        // }
     },
 
     async created() {

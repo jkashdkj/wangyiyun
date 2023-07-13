@@ -3,7 +3,7 @@
     <router-view />
 
     <!-- 播放器 -->
-    <Player></Player>
+    <Player v-if="showPlayer"></Player>
     <!-- 菜单 -->
    </div>
 </template>
@@ -11,8 +11,15 @@
 import Player from '@/components/Player/Player.vue'
 export default { 
     components:{Player},
-    created(){
-        
+    computed:{
+        showPlayer() {
+      // 在这里根据你的逻辑判断是否在当前页面显示播放器组件
+        //   return this.$route.path !== '/Playsong';
+      if(this.$route.path === '/Playsong'){
+        return false;
+      }
+      return true;
+    },
     }
 }
 </script>

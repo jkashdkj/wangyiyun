@@ -35,7 +35,7 @@ export default [
   },
   {
     path: '/Playsong',
-    component: ()  => import ('@/HomeView/Playsong.vue')
+    component: ()  => import ('../HomeView/Playsong.vue')
   },
 ];
 
