@@ -146,6 +146,7 @@ export default{
     },
     methods: {
         platAll() {
+            store.set('cookie_music',this.data.data.songs)
             this.$player.replacePlaylist(this.fetch.map((data) => data.id), '', '');
         },
         platAdd(item) {

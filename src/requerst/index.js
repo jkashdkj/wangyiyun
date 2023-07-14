@@ -53,3 +53,5 @@ export const fetchArtistList = () => http.get('/artist/list')
 export const getTrackDetail = (id) => http.get('/song/detail', { params: { ids: id } });
 
 // export const getMP3 = (id) => http.get('/song/url/v1',{params:{id,lever:"standard"}})
+
+export const recommondList = () => http.get('/homepage/block/page');

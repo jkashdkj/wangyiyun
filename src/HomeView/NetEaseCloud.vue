@@ -458,7 +458,7 @@ import Newsong from './Newsong.vue';
 import Drawer from '../components/Drawer.vue';
 import store from 'storejs';
 import Dialog from '@/components/Dialog'
-import { getUserAccount, getUserDetail } from '@/requerst';
+import { getUserAccount, getUserDetail ,recommondList} from '@/requerst';
 
 
 export default {
@@ -587,14 +587,11 @@ export default {
             console.log(this.menulist);
         });
         // 推荐歌单
-        axios
-            .get("https://netease-cloud-music-c2c1ys55f-cc-0820.vercel.app/homepage/block/page")
-            .then((res) => {
-            this.personalized = res.data.data.blocks[1].creatives.slice(1); //推荐歌单
-            this.bannerPic = res.data.data.blocks[1].creatives[0].resources; //小轮播数据
-            this.song = res.data.data.blocks[1].creatives;
-            console.log(this.personalized);
-        });
+        const res = await recommondList();
+        this.personalized = res.data.data.blocks[1].creatives.slice(1); //推荐歌单
+        this.bannerPic = res.data.data.blocks[1].creatives[0].resources; //小轮播数据
+        this.song = res.data.data.blocks[1].creatives;
+        console.log(this.personalized);
         // 新歌新碟
         axios
             .get("https://netease-cloud-music-c2c1ys55f-cc-0820.vercel.app/homepage/block/page")

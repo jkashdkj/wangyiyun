@@ -47,7 +47,7 @@
              <div v-for="item in fetch" :key="item.id" class="flex justify-between items-center h-[14vw]" @click="playColor(item.id)">
                  <h1 class="text-[14px]">
                      {{ item.name }}
-                     <span class="text-[3vw] text-[#BCBCBC]" :class=" item.id === $player._currentTrack.id ? 'text-[#D15B57]' : ''">{{ item.ar[0].name }}</span>
+                     <span class="text-[3vw] text-[#BCBCBC]" :class=" item.id === $player._currentTrack.id ? 'text-[#red]' : ''">{{ item.ar[0].name }}</span>
                  </h1>
                  <div class="flex items-center">
                      <p class="text-[3vw] mr-[6vw] text-[#BCBCBC]">播放来源</p>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import {fetchSongList,playlistTrackAll} from '@/requerst'
+import {playlistTrackAll} from '@/requerst'
 import store from 'storejs';
 export default {
     data(){
@@ -75,11 +75,7 @@ export default {
     async created(){
         this.switchCheckStatus = store.get("switch");
         this.data = await playlistTrackAll(this.$route.query.id.replace(":id="), "");
-        fetchSongList(this.$route.query.id).then((res) => {
-            console.log(res);
-            this.fetch = res.data.songs;
-            console.log(this.fetch);
-        })
+        this.fetch = store.get('cookie_music');
     },
     methods:{
         playFn(){

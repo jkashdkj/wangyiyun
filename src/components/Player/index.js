@@ -203,4 +203,22 @@ export default class {
     window.$player = Vue.prototype.$player;
     Vue.component("Player", Player);
   }
+  
+  playNextTrack() {
+    const [trackID, index] = this._getNextTrack();
+    if (trackID === undefined) {
+      this._howler && this._howler.stop();
+      this._playing = false;
+      return false;
+    }
+    if (!this.boolea) {
+      this._replaceCurrentTrack(this._currentTrack.id);
+      return true;
+    } else {
+      this.current = index;
+      this._replaceCurrentTrack(trackID);
+      return true;
+    }
+  }
 }
+

@@ -2,20 +2,20 @@
 <div class="ter h-[100vh] flex  flex-col justify-between">
     <!-- 头部 -->
     <div class=" flex items-center justify-center pt-[4.7vw]">
-        <Icon icon="formkit:right" color="white" :rotate="1" class="mr-[15.84vw]" @click.native="$router.go(-1)"/>
+        <Icon icon="formkit:right" color="white" :rotate="1" class="mr-[4.84vw]" @click.native="$router.go(-1)"/>
         <div class="flex items-center text-[#fff] text-[12px] flex-col">
-            <p>{{ $player._currentTrack.name }}</p>
+            <p class="w-[61.97vw] overflow-hidden text-center">{{ $player._currentTrack?.name }}</p>
             <div class="flex items-center mt-[1.62vw]">
-                <p class="text-[#aab2af] text-[13px] pr-[1.2vw]">{{ $player._currentTrack?.ar[0].name }}</p>
+                <p class="text-[#aab2af] text-[13px] pr-[1.2vw]">{{ $player._currentTrack?.ar[0]?.name }}</p>
                 <p class="text-[#e9e9e9] bg-[#575f5c] rounded-[6px] pl-[1.45vw] pr-[1.37vw] pt-[0.2vw] pb-[0.2vw]">关注</p>
             </div>
         </div>
-        <Icon icon="ri:share-circle-fill" color="white" width="25" height="25" class="ml-[22.44vw]" />
+        <Icon icon="ri:share-circle-fill" color="white" width="25" height="25" class="ml-[6.44vw]" />
     </div>
     <!-- 唱片 -->
-    <div class="rotate-container h-[100vw] pt-[25vw]">
-        <div class="">
-          <img src="../images/bf_3.png" alt="" class="h-[34.87vw] absolute translateX(-50%) left-1/2 top-[-1vw]">
+    <div class="rotate-container h-[100vw] pt-[25vw]" >
+        <div class="absolute top-[5%] left-[49%]  z-[10] rotated w-[26vw] h-[50vw]" ref="pointer" :style="!$player._playing ? `transform:rotate(-36deg)`:`transform:rotate(-5deg)`">
+          <img src="../images/bf_3.png" alt="" class="h-[40vw] absolute top-[-3.2vw] left-[-3.2vw]">
         </div>
         <div class="relative">
             <img src="../images/bf_1.png" class="m-auto w-[71.1vw]" alt="">
@@ -42,27 +42,74 @@
       </div>
       <!-- 播放 -->
       <div class="flex items-center justify-around pb-[13.33vw] pt-[5.98vw]">
-          <Icon icon="mi:shuffle" color="white"  width="30" height="30" />
+          <Icon @click.native="$player.boolea = !$player.boolea" :icon="$player.boolea ? 'fad:repeat' : 'fad:repeat-one'" class="text-[#fff] text-[8vw]" width="35" height="35"/>
           <Icon icon="fluent:previous-48-filled" color="white" width="25" height="25" @click.native="PrevTrackCallback"/>
           <van-circle v-model="currentRate" :rate="5" :speed="50"  size="15.6vw" :stroke-width="39" color="#fff" layer-color="#fff"/>
           <Icon @click.native="playFn" icon="carbon:pause-filled" width="25" color="white" class="top-84% left-50% absolute " v-if="$player._playing"/>
-          <Icon @click.native="playFn" icon="ph:play-fill" width="25px" color="white"  class="top-84% left-50% absolute " v-else/>
+          <Icon @click.native="playFn" icon="ph:play-fill" width="25" color="white"  class="top-84% left-50% absolute " v-else/>
           <Icon icon="fluent:next-16-filled" color="white" width="25" height="25"  @click.native="$player._nextTrackCallback()"/>
-          <Icon icon="iconamoon:playlist" class="text-[4.7vw]" color="white" width="30" height="30"/>
+          <Icon @click.native="showPopup" icon="iconamoon:playlist" class="text-[4.7vw]" color="white" width="30" height="30"/>
       </div>
     </div>
-    
+    <!-- 歌单列表 -->
+    <van-popup v-model="show" position="bottom" round :style="{ height: '136vw' }" class="z-[999]">
+     <div class="px-[4vw] relative">
+         <div class="ceiling">
+             <div class="h-[17.86vw] flex items-center">
+                 <span class="text-[4.53vw] text-[#313132] mr-[1.5vw]">当前播放</span>
+                 <span class="text-[3.16vw] text-[#A9A9AA]">({{ data.data?.songs?.length }})</span>
+             </div>
+             <div class="h-[6vw] pb-[4vw] flex items-center justify-between border-b-[0.3vw] border-b-[#F5F5F5]">
+                 <div class="w-[23vw] flex items-center justify-between">
+                     <Icon icon="icon-park-outline:loop-once" class="text-[#ADADAD] text-[5.38vw]" />
+                     <span class="text-[#323232] text-[3.42vw]">列表循环</span>
+                 </div>
+                 <div class="w-[26vw] flex items-center justify-between">
+                     <Icon icon="line-md:downloading-loop" class="text-[#ADADAD] text-[5.38vw]" />
+                     <Icon icon="icon-park-outline:add" class="text-[#ADADAD] text-[5.38vw]" />
+                     <Icon icon="uiw:delete" class="text-[#ADADAD] text-[5vw]" /> 
+                 </div>
+             </div>
+         </div>
+         <!-- 歌曲列表 -->
+         <div>
+             <div v-for="item in fetch" :key="item.id" class="flex justify-between items-center h-[14vw]" @click="playColor(item.id)">
+                 <h1 class="text-[14px]">
+                     {{ item.name }}
+                     <span class="text-[3vw] text-[#BCBCBC]" :class=" item.id === $player._currentTrack.id ? 'text-[#red]' : ''">{{ item.ar[0].name }}</span>
+                 </h1>
+                 <div class="flex items-center">
+                     <p class="text-[3vw] mr-[6vw] text-[#BCBCBC]">播放来源</p>
+                     <Icon icon="ic:baseline-close" :horizontalFlip="true" class="text-[5vw] text-[#B1B1B1]" />
+                 </div>
+             </div>
+         </div>
+     </div>
+    </van-popup>
 </div>
 </template>
 
 <script>
+import {playlistTrackAll} from '@/requerst'
+import store from 'storejs';
 export default{
     data(){
         return{
-          color:false
+          color:false,
+          show: false,
+          data:[],
+          fetch:[],
         }
     },
+    async created(){
+        this.switchCheckStatus = store.get("switch");
+        this.data = await playlistTrackAll(this.$route.query.id.replace(":id="), "");
+        this.fetch = store.get('cookie_music');
+    },
     methods:{
+      showPopup() {
+            this.show = true;
+      },
       playSingle(id) {
         this.$player.replacePlaylist(
             this.$player.list.map((data) => data),
@@ -121,6 +168,11 @@ export default{
 
 .ter{
     background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.rotated {
+  transition: all .5s;
+  transform-origin: left top;
 }
 
 </style>
